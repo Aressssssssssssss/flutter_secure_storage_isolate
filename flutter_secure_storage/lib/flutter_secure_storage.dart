@@ -32,14 +32,34 @@ class FlutterSecureStorage {
   /// [wOptions] - Options specific to Windows.
   /// [webOptions] - Options specific to Web.
   /// [mOptions] - Options specific to macOS.
-  const FlutterSecureStorage({
+  FlutterSecureStorage({
     this.iOptions = IOSOptions.defaultOptions,
     this.aOptions = AndroidOptions.defaultOptions,
     this.lOptions = LinuxOptions.defaultOptions,
     this.wOptions = WindowsOptions.defaultOptions,
     this.webOptions = WebOptions.defaultOptions,
     this.mOptions = MacOsOptions.defaultOptions,
-  });
+    BinaryMessenger? messenger,
+  }) : _messenger = messenger ?? _messengerOverride {
+    if (_messenger != null &&
+        FlutterSecureStoragePlatform.instance is! MethodChannelFlutterSecureStorage) {
+      FlutterSecureStoragePlatform.instance = MethodChannelFlutterSecureStorage(
+        messenger: _messenger,
+      );
+    }
+  }
+
+  static BinaryMessenger? _messengerOverride;
+
+  /// Globally override the messenger for MethodChannel implementations.
+  static void overrideMessenger(BinaryMessenger messenger) {
+    _messengerOverride = messenger;
+    FlutterSecureStoragePlatform.instance = MethodChannelFlutterSecureStorage(
+      messenger: messenger,
+    );
+  }
+
+  final BinaryMessenger? _messenger;
 
   /// Platform-specific options for iOS.
   ///

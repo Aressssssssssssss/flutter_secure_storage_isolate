@@ -1,15 +1,27 @@
 part of '../flutter_secure_storage_platform_interface.dart';
 
-const MethodChannel _channel =
-    MethodChannel('plugins.it_nomads.com/flutter_secure_storage');
-
-const EventChannel _eventChannel =
-    EventChannel('plugins.it_nomads.com/flutter_secure_storage/events');
-
 /// The `MethodChannelFlutterSecureStorage` class implements the
 /// `FlutterSecureStoragePlatform` interface using method channels to
 /// communicate with native platform code.
 class MethodChannelFlutterSecureStorage extends FlutterSecureStoragePlatform {
+  MethodChannelFlutterSecureStorage({BinaryMessenger? messenger})
+    : _messenger =
+          messenger ?? ServicesBinding.instance.defaultBinaryMessenger;
+
+  final BinaryMessenger _messenger;
+
+  MethodChannel get _channel => MethodChannel(
+    'plugins.it_nomads.com/flutter_secure_storage',
+    const StandardMethodCodec(),
+    _messenger,
+  );
+
+  EventChannel get _eventChannel => EventChannel(
+    'plugins.it_nomads.com/flutter_secure_storage/events',
+    const StandardMethodCodec(),
+    _messenger,
+  );
+
   /// A stream that emits updates when the availability of Cupertino protected
   /// data changes. It is only relevant on iOS and macOS platforms.
   ///

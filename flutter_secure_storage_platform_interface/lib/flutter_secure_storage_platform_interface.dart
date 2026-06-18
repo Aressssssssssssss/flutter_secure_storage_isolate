@@ -40,6 +40,12 @@ abstract class FlutterSecureStoragePlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  /// Allows overriding the messenger used by the default MethodChannel
+  /// implementation when running in background isolates.
+  static void configureInstanceForMessenger(BinaryMessenger messenger) {
+    _instance = MethodChannelFlutterSecureStorage(messenger: messenger);
+  }
+
   /// Writes a key-value pair to secure storage.
   ///
   /// Parameters:
